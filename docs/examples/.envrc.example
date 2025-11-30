@@ -1,0 +1,171 @@
+#!/usr/bin/env bash
+# Example .envrc file for workspace profiles
+# Copy this to your profile directory and customize as needed
+
+# ============================================================================
+# WORKSPACE IDENTIFICATION
+# ============================================================================
+# Set the profile name (should match the directory name)
+export WORKSPACE_PROFILE="example-profile"
+
+# Set the workspace home directory (automatically set to current directory)
+export WORKSPACE_HOME="$PWD"
+
+# ============================================================================
+# XDG BASE DIRECTORY SPECIFICATION
+# ============================================================================
+# Point all XDG-compliant tools to workspace-specific config
+# (automatically configured in new profiles created with create-profile.sh)
+export XDG_CONFIG_HOME="$WORKSPACE_HOME/dotfiles/.config"
+
+# ============================================================================
+# 1PASSWORD SSH AGENT
+# ============================================================================
+# Point to 1Password SSH agent socket for SSH key management
+# (automatically configured in new profiles created with create-profile.sh)
+export SSH_AUTH_SOCK="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+
+# ============================================================================
+# GIT CONFIGURATION
+# ============================================================================
+# Point git to profile-specific configuration file
+export GIT_CONFIG_GLOBAL="$WORKSPACE_HOME/dotfiles/.gitconfig"
+
+# ============================================================================
+# SSH CONFIGURATION
+# ============================================================================
+# Use workspace-specific SSH config instead of $HOME/.ssh/config
+export GIT_SSH_COMMAND="ssh -F $WORKSPACE_HOME/dotfiles/.ssh/config"
+
+# Note: SSH wrapper script is automatically created in bin/ssh
+# The bin/ directory is added to PATH first, so the wrapper is used instead of system ssh
+
+# ============================================================================
+# PATH MANAGEMENT
+# ============================================================================
+# Add profile-specific bin directory to PATH (before system paths)
+# PATH_add is a direnv stdlib function
+PATH_add bin
+
+# Add custom tool directories
+# PATH_add "$WORKSPACE_HOME/tools"
+# PATH_add "$WORKSPACE_HOME/.local/bin"
+
+# ============================================================================
+# LANGUAGE-SPECIFIC CONFIGURATIONS
+# ============================================================================
+
+# Node.js / NPM
+# export NPM_CONFIG_USERCONFIG="$WORKSPACE_HOME/dotfiles/.npmrc"
+# export NODE_ENV="development"
+
+# Python
+# export PYTHONPATH="$WORKSPACE_HOME/lib:$PYTHONPATH"
+# export VIRTUAL_ENV="$WORKSPACE_HOME/.venv"
+# PATH_add "$VIRTUAL_ENV/bin"
+
+# Ruby
+# export GEM_HOME="$WORKSPACE_HOME/.gems"
+# PATH_add "$GEM_HOME/bin"
+
+# Go
+# export GOPATH="$WORKSPACE_HOME/go"
+# PATH_add "$GOPATH/bin"
+
+# Rust
+# export CARGO_HOME="$WORKSPACE_HOME/.cargo"
+# PATH_add "$CARGO_HOME/bin"
+
+# ============================================================================
+# CLOUD PROVIDER CONFIGURATIONS
+# ============================================================================
+
+# AWS
+# export AWS_PROFILE="my-profile"
+# export AWS_DEFAULT_REGION="us-east-1"
+# export AWS_CONFIG_FILE="$WORKSPACE_HOME/dotfiles/.aws/config"
+# export AWS_SHARED_CREDENTIALS_FILE="$WORKSPACE_HOME/dotfiles/.aws/credentials"
+
+# Google Cloud
+# export CLOUDSDK_CONFIG="$WORKSPACE_HOME/dotfiles/.config/gcloud"
+# export GOOGLE_APPLICATION_CREDENTIALS="$WORKSPACE_HOME/dotfiles/gcloud-key.json"
+
+# Azure
+# export AZURE_CONFIG_DIR="$WORKSPACE_HOME/dotfiles/.azure"
+
+# ============================================================================
+# KUBERNETES / DOCKER
+# ============================================================================
+
+# Kubernetes (automatically configured in new profiles created with create-profile.sh)
+# export KUBECONFIG="$WORKSPACE_HOME/dotfiles/.kube/config"
+
+# Docker
+# export DOCKER_CONFIG="$WORKSPACE_HOME/dotfiles/.docker"
+
+# ============================================================================
+# EDITOR AND TOOL PREFERENCES
+# ============================================================================
+
+# Editor preferences
+# export EDITOR="vim"
+# export VISUAL="code"
+
+# Pager preferences
+# export PAGER="less"
+# export LESS="-R"
+
+# ============================================================================
+# PROJECT-SPECIFIC VARIABLES
+# ============================================================================
+
+# Database connections
+# export DATABASE_URL="postgresql://localhost:5432/mydb"
+# export REDIS_URL="redis://localhost:6379"
+
+# API keys and secrets (DO NOT COMMIT THESE - use .env files instead)
+# export API_KEY="your-api-key-here"
+# export SECRET_KEY="your-secret-key-here"
+
+# Application configuration
+# export APP_ENV="development"
+# export LOG_LEVEL="debug"
+# export PORT="3000"
+
+# ============================================================================
+# CUSTOM ALIASES (via functions)
+# ============================================================================
+# Note: direnv doesn't export aliases, but you can export functions
+# or use a separate shell script sourced from your shell config
+
+# ============================================================================
+# HELPER FUNCTIONS
+# ============================================================================
+
+# Print workspace information
+workspace_info() {
+    echo "Workspace Profile: $WORKSPACE_PROFILE"
+    echo "Workspace Home: $WORKSPACE_HOME"
+    echo "Git Config: $GIT_CONFIG_GLOBAL"
+    echo "Git User: $(git config user.name) <$(git config user.email)>"
+}
+export -f workspace_info
+
+# ============================================================================
+# LOAD ADDITIONAL CONFIGURATION
+# ============================================================================
+
+# Load .env file if it exists (for secrets that shouldn't be in version control)
+dotenv_if_exists .env
+
+# Load local overrides (should be in .gitignore)
+dotenv_if_exists .envrc.local
+
+# ============================================================================
+# WELCOME MESSAGE (optional)
+# ============================================================================
+# Show a message when entering the workspace
+log_status "Loaded workspace profile: $WORKSPACE_PROFILE"
+
+# Uncomment to show workspace info on every directory entry
+# workspace_info
